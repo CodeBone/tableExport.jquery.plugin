@@ -43,7 +43,7 @@ THE SOFTWARE.*/
 					// Header
 					var tdData ="";
 					$(el).find('thead').find('tr').each(function() {
-					tdData += "\n";					
+						tdData += "\n";					
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -58,7 +58,7 @@ THE SOFTWARE.*/
 					
 					// Row vs Column
 					$(el).find('tbody').find('tr').each(function() {
-					tdData += "\n";
+						tdData += "\n";
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -67,6 +67,19 @@ THE SOFTWARE.*/
 							}
 						});
 						//tdData = $.trim(tdData);
+						tdData = $.trim(tdData).substring(0, tdData.length -1);
+					});
+					$(el).find('tfoot').find('tr').each(function() {
+						tdData += "\n";					
+						$(this).filter(':visible').find('th').each(function(index,data) {
+							if ($(this).css('display') != 'none'){
+								if(defaults.ignoreColumn.indexOf(index) == -1){
+									tdData += '"' + parseString($(this)) + '"' + defaults.separator;									
+								}
+							}
+							
+						});
+						tdData = $.trim(tdData);
 						tdData = $.trim(tdData).substring(0, tdData.length -1);
 					});
 					
@@ -311,12 +324,12 @@ THE SOFTWARE.*/
 					$(el).find('tbody').find('tr').each(function(index,data) {
 						rowCalc = index+1;
 						
-					if (rowCalc % 26 == 0){
-						doc.addPage();
-						page++;
-						startRowPosition=startRowPosition+10;
-					}
-					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
+						if (rowCalc % 26 == 0){
+							doc.addPage();
+							page++;
+							startRowPosition=startRowPosition+10;
+						}
+						rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
 						
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
@@ -330,6 +343,21 @@ THE SOFTWARE.*/
 						
 					});					
 										
+
+					// Header
+					var startColPosition=defaults.pdfLeftMargin;
+					$(el).find('tfoot').find('tr').each(function() {
+						rowCalc++;
+						rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
+						$(this).filter(':visible').find('th').each(function(index,data) {
+							if ($(this).css('display') != 'none'){					
+								if(defaults.ignoreColumn.indexOf(index) == -1){
+									var colPosition = startColPosition+ (index * 50);									
+									doc.text(colPosition,rowPosition+1, parseString($(this)));
+								}
+							}
+						});									
+					});		
 					// Output as Data URI
 					doc.output('datauri');
 	
